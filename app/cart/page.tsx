@@ -1,18 +1,23 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useCart } from "@/contexts/CartContext"
-import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react"
+import { useCart } from "@/hooks/use-cart"
+import { Trash2, Plus, Minus, ShoppingBag, Heart, ArrowLeft } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { Badge } from "@/components/ui/badge"
 
 type CartItem = {
   id: number
   name: string
   price: number
   quantity: number
-  images: string[]
-  selectedSize: string
-  selectedColor: string
+  image: string
+  size: string
+  color: string
 }
 
 const formatPrice = (price: number) => {
@@ -25,42 +30,48 @@ const formatPrice = (price: number) => {
 }
 
 export default function CartPage() {
-  const cartContext = useCart()
+  const { cartItems, updateQuantity, removeFromCart, getTotalPrice, getTotalItems, isLoading, isClient } = useCart()
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
 
-  if (!cartContext) {
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Show loading state during SSR and initial client load
+  if (!mounted || isLoading || !isClient) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <p className="text-gray-600">Loading cart data...</p>
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-48 mx-auto mb-4"></div>
+          <div className="h-4 bg-gray-200 rounded w-32 mx-auto"></div>
+        </div>
       </div>
     )
   }
 
-  const { cart, removeFromCart, updateQuantity, getCartTotal } = cartContext
-  const subtotal = getCartTotal()
-  const total = subtotal
+  const subtotal = getTotalPrice()
+  const shippingCost = subtotal > 500000 ? 0 : 25000 // Gratis ongkir untuk pembelian di atas 500rb
+  const total = subtotal + shippingCost
 
-  const handleQuantityChange = (item: CartItem, newQuantity: number) => {
-      if (newQuantity < 1) return
-      updateQuantity(item.id, item.selectedSize, item.selectedColor, newQuantity)
-    }
-  
-    const handleRemoveItem = (item: CartItem) => {
-      removeFromCart(item.id, item.selectedSize, item.selectedColor)
-    }
+  const handleQuantityChange = (id: number, color: string, size: string, newQuantity: number) => {
+    if (newQuantity < 1) return
+    updateQuantity(id, color, size, newQuantity)
+  }
 
-  if (cart.length === 0) {
+  const handleRemoveItem = (id: number, color: string, size: string) => {
+    removeFromCart(id, color, size)
+  }
+
+  if (!cartItems || cartItems.length === 0) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <div className="max-w-md mx-auto">
           <ShoppingBag size={64} className="mx-auto text-gray-300 mb-6" />
-          <h1 className="text-2xl font-bold mb-4">Your cart is empty</h1>
-          <p className="text-gray-600 mb-8">Looks like you haven't added any products to your cart yet.</p>
-          <Link
-            href="/catalog"
-            className="inline-block bg-rose-600 text-white px-6 py-3 rounded-md hover:bg-rose-700 transition-colors"
-          >
-            Continue Shopping
+          <h1 className="text-2xl font-bold mb-4">Keranjang Belanja Kosong</h1>
+          <p className="text-gray-600 mb-8">Sepertinya Anda belum menambahkan produk apapun ke keranjang belanja.</p>
+          <Link href="/">
+            <Button className="bg-rose-600 hover:bg-rose-700">Mulai Berbelanja</Button>
           </Link>
         </div>
       </div>
@@ -69,119 +80,175 @@ export default function CartPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-8">Shopping Cart</h1>
+      {/* Header */}
+      <div className="flex items-center gap-4 mb-8">
+        <Link href="/">
+          <Button variant="ghost" size="icon">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+        </Link>
+        <div>
+          <h1 className="text-2xl font-bold">Keranjang Belanja</h1>
+          <p className="text-gray-600">{getTotalItems()} item dalam keranjang</p>
+        </div>
+      </div>
 
-      <div className="flex flex-col lg:flex-row gap-8">
-        <div className="lg:w-2/3">
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div className="hidden md:grid md:grid-cols-5 bg-gray-50 p-4 text-sm font-medium text-gray-600">
-              <div className="col-span-2">Product</div>
-              <div>Price</div>
-              <div>Quantity</div>
-              <div>Total</div>
-            </div>
-
-            {cart.map((item, index) => (
-              <div
-                key={`${item.id}-${item.selectedSize}-${item.selectedColor}`}
-                className={`grid grid-cols-1 md:grid-cols-5 gap-4 p-4 items-center ${index < cart.length - 1 ? "border-b border-gray-200" : ""}`}
-              >
-                <div className="md:col-span-2 flex gap-4">
-                  <img
-                    src={item.images[0] || "/placeholder.svg"}
-                    alt={item.name}
-                    className="w-20 h-20 object-cover rounded-md"
-                  />
-                  <div>
-                    <h3 className="font-medium">{item.name}</h3>
-                    <div className="text-sm text-gray-500 mt-1">
-                      <p>Size: {item.selectedSize}</p>
-                      <p>Color: {item.selectedColor}</p>
-                    </div>
-                    <button
-                      className="text-rose-600 text-sm flex items-center gap-1 mt-2 md:hidden"
-                      onClick={() => handleRemoveItem(item)}
-                    >
-                      <Trash2 size={14} />
-                      Remove
-                    </button>
-                  </div>
-                </div>
-
-                <div className="md:text-center">
-                  <span className="md:hidden text-gray-600">Price: </span>
-                  {formatPrice(item.price)}
-                </div>
-
-                <div>
-                  <div className="flex items-center">
-                    <button
-                      className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-l-md"
-                      onClick={() => handleQuantityChange(item, item.quantity - 1)}
-                    >
-                      <Minus size={14} />
-                    </button>
-                    <input
-                      type="text"
-                      value={item.quantity}
-                      readOnly
-                      className="w-10 h-8 text-center border-t border-b border-gray-300"
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Cart Items */}
+        <div className="lg:col-span-2 space-y-4">
+          {cartItems.map((item) => (
+            <Card key={`${item.id}-${item.color}-${item.size}`}>
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  {/* Product Image */}
+                  <div className="relative">
+                    <img
+                      src={item.image || "/placeholder.svg"}
+                      alt={item.name}
+                      className="w-24 h-24 object-cover rounded-lg"
                     />
-                    <button
-                      className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-r-md"
-                      onClick={() => handleQuantityChange(item, item.quantity + 1)}
-                    >
-                      <Plus size={14} />
-                    </button>
+                  </div>
+
+                  {/* Product Details */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-lg mb-2 line-clamp-2">{item.name}</h3>
+
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      <Badge variant="outline" className="text-xs">
+                        Ukuran: {item.size}
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        Warna: {item.color}
+                      </Badge>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-lg font-bold text-rose-600">{formatPrice(item.price)}</p>
+                        <p className="text-sm text-gray-500">Total: {formatPrice(item.price * item.quantity)}</p>
+                      </div>
+
+                      {/* Quantity Controls */}
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center border rounded-lg">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => handleQuantityChange(item.id, item.color, item.size, item.quantity - 1)}
+                            disabled={item.quantity <= 1}
+                          >
+                            <Minus className="h-3 w-3" />
+                          </Button>
+                          <span className="px-3 py-1 text-sm font-medium min-w-[2rem] text-center">
+                            {item.quantity}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => handleQuantityChange(item.id, item.color, item.size, item.quantity + 1)}
+                          >
+                            <Plus className="h-3 w-3" />
+                          </Button>
+                        </div>
+
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                          onClick={() => handleRemoveItem(item.id, item.color, item.size)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          ))}
 
-                <div className="flex items-center justify-between">
-                  <span className="md:hidden text-gray-600">Total: </span>
-                  <div className="flex items-center gap-4">
-                    {formatPrice(item.price * item.quantity)}
-                    <button
-                      className="text-gray-400 hover:text-rose-600 hidden md:block"
-                      onClick={() => handleRemoveItem(item)}
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-6 flex justify-between">
-            <Link href="/catalog" className="text-rose-600 hover:text-rose-700 flex items-center gap-2">
-              ← Continue Shopping
+          {/* Continue Shopping */}
+          <div className="pt-4">
+            <Link href="/" className="text-rose-600 hover:text-rose-700 flex items-center gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Lanjutkan Berbelanja
             </Link>
           </div>
         </div>
 
-        <div className="lg:w-1/3">
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-lg font-bold mb-4">Order Summary</h2>
+        {/* Order Summary */}
+        <div className="lg:col-span-1">
+          <Card className="sticky top-4">
+            <CardContent className="p-6">
+              <h2 className="text-xl font-bold mb-6">Ringkasan Pesanan</h2>
 
-            <div className="space-y-4">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Subtotal</span>
-                <span>{formatPrice(subtotal)}</span>
+              <div className="space-y-4">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Subtotal ({getTotalItems()} item)</span>
+                  <span className="font-medium">{formatPrice(subtotal)}</span>
+                </div>
+
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Ongkos Kirim</span>
+                  <span className="font-medium">
+                    {shippingCost === 0 ? <span className="text-green-600">GRATIS</span> : formatPrice(shippingCost)}
+                  </span>
+                </div>
+
+                {shippingCost === 0 && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                    <p className="text-green-700 text-xs">🎉 Selamat! Anda mendapat gratis ongkir</p>
+                  </div>
+                )}
+
+                {subtotal < 500000 && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <p className="text-blue-700 text-xs">
+                      💡 Belanja {formatPrice(500000 - subtotal)} lagi untuk gratis ongkir!
+                    </p>
+                  </div>
+                )}
+
+                <Separator />
+
+                <div className="flex justify-between text-lg font-bold">
+                  <span>Total</span>
+                  <span className="text-rose-600">{formatPrice(total)}</span>
+                </div>
+
+                <Button
+                  className="w-full bg-rose-600 hover:bg-rose-700 text-white py-3"
+                  onClick={() => router.push("/checkout")}
+                >
+                  Lanjut ke Pembayaran
+                </Button>
+
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => {
+                    // Add to wishlist functionality
+                    alert("Fitur simpan untuk nanti akan segera hadir!")
+                  }}
+                >
+                  <Heart className="h-4 w-4 mr-2" />
+                  Simpan untuk Nanti
+                </Button>
               </div>
 
-              <div className="border-t border-gray-200 pt-4 flex justify-between font-bold">
-                <span>Total</span>
-                <span>{formatPrice(total)}</span>
+              {/* Security Badge */}
+              <div className="mt-6 pt-4 border-t">
+                <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                    <span className="text-white text-[8px]">✓</span>
+                  </div>
+                  <span>Transaksi aman & terpercaya</span>
+                </div>
               </div>
-
-              <button
-                className="w-full bg-rose-600 text-white py-3 rounded-md hover:bg-rose-700 transition-colors"
-                onClick={() => router.push("/checkout")}
-              >
-                Proceed to Checkout
-              </button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
