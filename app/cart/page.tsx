@@ -3,22 +3,12 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useCart } from "@/hooks/use-cart"
+import { cartUtils, type CartItem } from "@/lib/cart-utils"
 import { Trash2, Plus, Minus, ShoppingBag, Heart, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
-
-type CartItem = {
-  id: number
-  name: string
-  price: number
-  quantity: number
-  image: string
-  size: string
-  color: string
-}
 
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat("id-ID", {
@@ -30,16 +20,23 @@ const formatPrice = (price: number) => {
 }
 
 export default function CartPage() {
-  const { cartItems, updateQuantity, removeFromCart, getTotalPrice, getTotalItems, isLoading, isClient } = useCart()
-  const router = useRouter()
+  const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [mounted, setMounted] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     setMounted(true)
+    setCartItems(cartUtils.getCart())
+
+    const handleCartUpdate = () => {
+      setCartItems(cartUtils.getCart())
+    }
+
+    window.addEventListener("cartUpdated", handleCartUpdate)
+    return () => window.removeEventListener("cartUpdated", handleCartUpdate)
   }, [])
 
-  // Show loading state during SSR and initial client load
-  if (!mounted || isLoading || !isClient) {
+  if (!mounted) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <div className="animate-pulse">
@@ -50,20 +47,22 @@ export default function CartPage() {
     )
   }
 
-  const subtotal = getTotalPrice()
-  const shippingCost = subtotal > 500000 ? 0 : 25000 // Gratis ongkir untuk pembelian di atas 500rb
+  const subtotal = cartUtils.getTotalPrice()
+  const shippingCost = subtotal > 500000 ? 0 : 25000
   const total = subtotal + shippingCost
 
   const handleQuantityChange = (id: number, color: string, size: string, newQuantity: number) => {
     if (newQuantity < 1) return
-    updateQuantity(id, color, size, newQuantity)
+    cartUtils.updateQuantity(id, color, size, newQuantity)
+    setCartItems(cartUtils.getCart())
   }
 
   const handleRemoveItem = (id: number, color: string, size: string) => {
-    removeFromCart(id, color, size)
+    cartUtils.removeFromCart(id, color, size)
+    setCartItems(cartUtils.getCart())
   }
 
-  if (!cartItems || cartItems.length === 0) {
+  if (cartItems.length === 0) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <div className="max-w-md mx-auto">
@@ -89,7 +88,7 @@ export default function CartPage() {
         </Link>
         <div>
           <h1 className="text-2xl font-bold">Keranjang Belanja</h1>
-          <p className="text-gray-600">{getTotalItems()} item dalam keranjang</p>
+          <p className="text-gray-600">{cartUtils.getTotalItems()} item dalam keranjang</p>
         </div>
       </div>
 
@@ -186,7 +185,7 @@ export default function CartPage() {
 
               <div className="space-y-4">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Subtotal ({getTotalItems()} item)</span>
+                  <span className="text-gray-600">Subtotal ({cartUtils.getTotalItems()} item)</span>
                   <span className="font-medium">{formatPrice(subtotal)}</span>
                 </div>
 
@@ -229,7 +228,6 @@ export default function CartPage() {
                   variant="outline"
                   className="w-full"
                   onClick={() => {
-                    // Add to wishlist functionality
                     alert("Fitur simpan untuk nanti akan segera hadir!")
                   }}
                 >

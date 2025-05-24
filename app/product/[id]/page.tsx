@@ -1,28 +1,49 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useParams } from "next/navigation"
 import Image from "next/image"
-import { products } from "@/data/products"
+import { products } from "@/lib/data/products"
+import { cartUtils } from "@/lib/cart-utils"
 import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Heart, ShoppingBag } from "lucide-react"
-import { useCart } from "@/hooks/use-cart"
+import type { Product } from "@/types/product"
 
 export default function ProductPage() {
   const params = useParams()
-  const id = Array.isArray(params?.id) ? params?.id[0] : params?.id
-  const [product, setProduct] = useState(products[0])
+  const id = Array.isArray(params.id) ? params.id[0] : params.id
+  const [product, setProduct] = useState<Product | null>(null)
   const [selectedColor, setSelectedColor] = useState("")
   const [selectedSize, setSelectedSize] = useState("")
   const [quantity, setQuantity] = useState(1)
   const [currentImage, setCurrentImage] = useState("")
   const [imageTransition, setImageTransition] = useState(false)
 
-  const { addToCart } = useCart()
-  const router = useRouter()
+  useEffect(() => {
+    if (id) {
+      const foundProduct = products.find((p) => p.id.toString() === id)
+      if (foundProduct) {
+        setProduct(foundProduct)
+        setSelectedColor(foundProduct.colors[0])
+        setSelectedSize(foundProduct.sizes[0])
+        setCurrentImage(foundProduct.images[0])
+      }
+    }
+  }, [id])
+
+  if (!product) {
+    return (
+      <div className="container mx-auto py-10 text-center">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-48 mx-auto mb-4"></div>
+          <div className="h-4 bg-gray-200 rounded w-32 mx-auto"></div>
+        </div>
+      </div>
+    )
+  }
 
   const handleAddToCart = () => {
     if (!selectedColor || !selectedSize) {
@@ -30,17 +51,8 @@ export default function ProductPage() {
       return
     }
 
-    console.log("Adding to cart:", {
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: currentImage,
-      color: selectedColor,
-      size: selectedSize,
-    })
-
     try {
-      addToCart({
+      cartUtils.addToCart({
         id: product.id,
         name: product.name,
         price: product.price,
@@ -49,78 +61,79 @@ export default function ProductPage() {
         size: selectedSize,
       })
 
-      // Show success message
       alert(`${product.name} berhasil ditambahkan ke keranjang!`)
-
-      // Optional: redirect to cart after adding
-      // router.push('/cart')
     } catch (error) {
       console.error("Error adding to cart:", error)
       alert("Gagal menambahkan produk ke keranjang. Silakan coba lagi.")
     }
   }
 
-  useEffect(() => {
-    const foundProduct = products.find((p) => p.id.toString() === id)
-    if (foundProduct) {
-      setProduct(foundProduct)
-      setSelectedColor(foundProduct.colors[0])
-      setSelectedSize(foundProduct.sizes[0])
-      setCurrentImage(foundProduct.images[0])
-    }
-  }, [id])
-
-  // Enhanced function to handle color change with smooth image transition
   const handleColorChange = (color: string) => {
     setSelectedColor(color)
-
-    // Start transition effect
     setImageTransition(true)
 
     setTimeout(() => {
-      // Find the index of the selected color in the product's colors array
       const colorIndex = product.colors.findIndex((c) => c === color)
-
-      // Create a more sophisticated mapping system
       let imageIndex = 0
 
-      // Map specific colors to specific images
+      // Map colors to specific images based on the new color names
       switch (color) {
         case "red":
-          imageIndex = 0 // Always use first image for red
+        case "light-red":
+          imageIndex = 0
+          break
+        case "white":
+          imageIndex = 1 % product.images.length
           break
         case "black":
           imageIndex = 1 % product.images.length
           break
-        case "white":
-          imageIndex = 2 % product.images.length
-          break
         case "blue":
-        case "navy":
         case "light-blue":
           imageIndex = 0 % product.images.length
           break
+        case "pink":
+          imageIndex = 1 % product.images.length
+          break
+        case "brown":
+        case "light-brown":
+          imageIndex = 0 % product.images.length
+          break
+        case "gray":
+        case "silver misty":
+          imageIndex = 1 % product.images.length
+          break
+        case "cream":
+        case "beige":
+          imageIndex = 0 % product.images.length
+          break
+        case "army":
+          imageIndex = 0 % product.images.length
+          break
+        case "yellow":
+          imageIndex = 0
+          break
+        case "green":
+          imageIndex = 0
+          break
+        case "floral-blue":
+          imageIndex = 0
+          break
         default:
-          // For other colors, use the color index
           imageIndex = colorIndex >= 0 ? colorIndex % product.images.length : 0
       }
 
       setCurrentImage(product.images[imageIndex])
       setImageTransition(false)
-    }, 150) // Short delay for smooth transition
+    }, 150)
   }
 
-  // Handle thumbnail click
   const handleThumbnailClick = (image: string) => {
     setImageTransition(true)
     setTimeout(() => {
       setCurrentImage(image)
       setImageTransition(false)
     }, 150)
-  }
-
-  if (!product) {
-    return <div className="container mx-auto py-10">Product not found</div>
   }
 
   return (
@@ -138,7 +151,6 @@ export default function ProductPage() {
               }`}
               priority
             />
-            {/* Color indicator overlay */}
             <div className="absolute top-4 right-4">
               <div
                 className="w-6 h-6 rounded-full border-2 border-white shadow-lg"
@@ -195,7 +207,7 @@ export default function ProductPage() {
             <p className="text-gray-700">{product.description}</p>
           </div>
 
-          {/* Enhanced Color Selection */}
+          {/* Color Selection */}
           <div>
             <h3 className="text-sm font-medium mb-3">
               Color: <span className="font-normal text-gray-600 capitalize">{selectedColor}</span>
@@ -260,7 +272,7 @@ export default function ProductPage() {
             </Select>
           </div>
 
-          {/* Add to Cart and Wishlist - UNCHANGED */}
+          {/* Add to Cart and Wishlist */}
           <div className="flex space-x-4">
             <Button className="flex-1 gap-2" onClick={handleAddToCart}>
               <ShoppingBag size={16} />
@@ -294,7 +306,6 @@ export default function ProductPage() {
   )
 }
 
-// Helper function to convert color names to color codes
 function getColorCode(colorName: string): string {
   const colorMap: Record<string, string> = {
     // Basic colors
@@ -311,6 +322,7 @@ function getColorCode(colorName: string): string {
     maroon: "#800000",
     burgundy: "#800020",
     red: "#FF0000",
+    "light-red": "#FF6B6B",
     pink: "#FFC0CB",
     yellow: "#FFFF00",
     green: "#008000",
@@ -319,12 +331,15 @@ function getColorCode(colorName: string): string {
     sage: "#BCB88A",
     camel: "#C19A6B",
     brown: "#A52A2A",
+    "light-brown": "#D2B48C",
     terracotta: "#E2725B",
     "royal-blue": "#4169E1",
     "dusty-pink": "#D8A9A9",
     ivory: "#FFFFF0",
     ecru: "#C2B280",
     "powder-blue": "#B0E0E6",
+    "silver misty": "#C0C0C0",
+    army: "#4B5320",
 
     // Patterns
     "floral-blue": "#5D8AA8",
@@ -335,5 +350,5 @@ function getColorCode(colorName: string): string {
     stripe: "#4682B4",
   }
 
-  return colorMap[colorName] || "#CCCCCC" // Default to gray if color not found
+  return colorMap[colorName] || "#CCCCCC"
 }

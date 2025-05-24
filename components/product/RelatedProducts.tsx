@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { products } from "@/data/products"
+import { products } from "@/lib/data/products"
 
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat("id-ID", {

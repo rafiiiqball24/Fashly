@@ -8,12 +8,7 @@ export const products: Product[] = [
     price: 249000,
     description:
       "T-shirt berbahan katun premium dengan potongan oversized yang nyaman dan stylish. Cocok untuk casual everyday look.",
-    images: [
-      "/produk/produk1.png",
-      "/produk/produk2.png",
-      
-      
-    ],
+    images: ["/produk/produk1.png", "/produk/produk2.png"],
     category: "tops",
     subcategory: "t-shirts",
     colors: ["red", "white"],
@@ -29,14 +24,10 @@ export const products: Product[] = [
     name: "Knitted Sweater",
     price: 379000,
     description: "Sweater rajut yang hangat dan stylish, sempurna untuk musim dingin atau ruangan ber-AC.",
-    images: [
-      "/produk/produk14.png",
-      "/produk/produk15.png",
-      
-    ],
+    images: ["/produk/produk14.png", "/produk/produk15.png"],
     category: "tops",
     subcategory: "sweaters",
-    colors: ["blue", "pink" ],
+    colors: ["blue", "pink"],
     sizes: ["S", "M", "L", "XL"],
     stock: 30,
     rating: 4.6,
@@ -49,14 +40,10 @@ export const products: Product[] = [
     name: "Striped Button-Up Shirt",
     price: 289000,
     description: "Kemeja bergaris dengan potongan modern yang cocok untuk gaya smart casual maupun formal.",
-    images: [
-      "/produk/produk13.png",
-      "/produk/produk12.png",
-      
-    ],
+    images: ["/produk/produk13.png", "/produk/produk12.png"],
     category: "tops",
     subcategory: "shirts",
-    colors: ["black",],
+    colors: ["black"],
     sizes: ["S", "M", "L", "XL", "XXL"],
     stock: 45,
     rating: 4.3,
@@ -69,14 +56,10 @@ export const products: Product[] = [
     name: "Silk Blouse",
     price: 429000,
     description: "Blouse berbahan sutra premium dengan sentuhan elegan, sempurna untuk acara formal atau kantor.",
-    images: [
-      "/produk/produk10.png",
-      "/produk/produk11.png",
-      
-    ],
+    images: ["/produk/produk10.png", "/produk/produk11.png"],
     category: "tops",
     subcategory: "blouses",
-    colors: ["cream", "beige",],
+    colors: ["cream", "beige"],
     sizes: ["S", "M", "L"],
     stock: 25,
     rating: 4.8,
@@ -89,14 +72,10 @@ export const products: Product[] = [
     name: "Graphic Print T-shirt",
     price: 229000,
     description: "T-shirt dengan desain grafis eksklusif yang menambah karakter pada gaya casual Anda.",
-    images: [
-      "/produk/produk8.png",
-      "/produk/produk9.png",
-      
-    ],
+    images: ["/produk/produk8.png", "/produk/produk9.png"],
     category: "tops",
     subcategory: "t-shirts",
-    colors: ["black", "white",],
+    colors: ["black", "white"],
     sizes: ["S", "M", "L", "XL"],
     stock: 60,
     rating: 4.4,
@@ -109,10 +88,7 @@ export const products: Product[] = [
     name: "Turtleneck Sweater",
     price: 359000,
     description: "Sweater turtleneck yang hangat dan nyaman, sempurna untuk musim dingin atau ruangan ber-AC.",
-    images: [
-      "/produk/produk6.png",
-      "/produk/produk7.png",
-    ],
+    images: ["/produk/produk6.png", "/produk/produk7.png"],
     category: "tops",
     subcategory: "sweaters",
     colors: ["silver misty", "gray"],
@@ -128,11 +104,7 @@ export const products: Product[] = [
     name: "Linen Button-Down Shirt",
     price: 319000,
     description: "Kemeja berbahan linen yang breathable dan nyaman, cocok untuk gaya casual maupun semi-formal.",
-    images: [
-      "/produk/produk3.png",
-      "/produk/produk4.png",
-      
-    ],
+    images: ["/produk/produk3.png", "/produk/produk4.png"],
     category: "tops",
     subcategory: "shirts",
     colors: ["black", "white"],
@@ -148,10 +120,7 @@ export const products: Product[] = [
     name: "Peplum Blouse",
     price: 349000,
     description: "Blouse dengan detail peplum yang memberikan siluet feminine dan elegan untuk berbagai kesempatan.",
-    images: [
-      "/produk/produk5.png",
-      
-    ],
+    images: ["/produk/produk5.png"],
     category: "tops",
     subcategory: "blouses",
     colors: ["gray"],
@@ -170,10 +139,7 @@ export const products: Product[] = [
     price: 399000,
     description:
       "Jeans dengan potongan high waist dan slim fit yang memberikan tampilan ramping dan nyaman dipakai sepanjang hari.",
-    images: [
-      "/produk/produk29.png",
-     
-    ],
+    images: ["/produk/produk29.png"],
     category: "bottoms",
     subcategory: "jeans",
     colors: ["light-blue"],
@@ -190,14 +156,10 @@ export const products: Product[] = [
     price: 329000,
     description:
       "Celana chino dengan potongan slim fit yang versatile, cocok untuk berbagai kesempatan dari casual hingga semi-formal.",
-    images: [
-      "/produk/produk27.png",
-      "/produk/produk28.png",
-      
-    ],
+    images: ["/produk/produk27.png", "/produk/produk28.png"],
     category: "bottoms",
     subcategory: "pants",
-    colors: ["brown", "black",],
+    colors: ["brown", "black"],
     sizes: ["28", "29", "30", "31", "32", "33", "34"],
     stock: 40,
     rating: 4.4,
@@ -211,14 +173,10 @@ export const products: Product[] = [
     price: 299000,
     description:
       "Rok midi dengan lipatan yang memberikan kesan feminine dan elegan. Mudah dipadukan dengan berbagai atasan.",
-    images: [
-      "/produk/produk26.png",
-     
-      "/placeholder.svg?height=600&width=400",
-    ],
+    images: ["/produk/produk26.png", "/placeholder.svg?height=600&width=400"],
     category: "bottoms",
     subcategory: "skirts",
-    colors: ["black", ],
+    colors: ["black"],
     sizes: ["S", "M", "L"],
     stock: 20,
     rating: 4.5,
@@ -231,14 +189,10 @@ export const products: Product[] = [
     name: "Wide Leg Jeans",
     price: 379000,
     description: "Jeans dengan potongan wide leg yang trendy dan nyaman, memberikan tampilan yang stylish dan modern.",
-    images: [
-      "/produk/produk24.png",
-      "/produk/produk25.png",
-     
-    ],
+    images: ["/produk/produk24.png", "/produk/produk25.png"],
     category: "bottoms",
     subcategory: "jeans",
-    colors: ["blue", "black",],
+    colors: ["blue", "black"],
     sizes: ["26", "27", "28", "29", "30", "31", "32"],
     stock: 30,
     rating: 4.6,
@@ -251,14 +205,10 @@ export const products: Product[] = [
     name: "Cargo Pants",
     price: 359000,
     description: "Celana cargo dengan banyak kantong yang fungsional dan stylish, cocok untuk gaya street style.",
-    images: [
-      "/produk/produk22.png",
-      "/produk/produk23.png",
-      
-    ],
+    images: ["/produk/produk22.png", "/produk/produk23.png"],
     category: "bottoms",
     subcategory: "pants",
-    colors: ["brown", "white", ],
+    colors: ["brown", "white"],
     sizes: ["28", "29", "30", "31", "32", "33", "34"],
     stock: 45,
     rating: 4.3,
@@ -271,11 +221,7 @@ export const products: Product[] = [
     name: "Denim Shorts",
     price: 249000,
     description: "Shorts denim yang nyaman dan versatile, sempurna untuk gaya casual di hari yang hangat.",
-    images: [
-      "/produk/produk20.png",
-      "/produk/produk21.png",
-      
-    ],
+    images: ["/produk/produk20.png", "/produk/produk21.png"],
     category: "bottoms",
     subcategory: "shorts",
     colors: ["blue", "white"],
@@ -291,14 +237,10 @@ export const products: Product[] = [
     name: "A-Line Mini Skirt",
     price: 279000,
     description: "Rok mini dengan potongan A-line yang flattering dan stylish, cocok untuk berbagai kesempatan.",
-    images: [
-      "/produk/produk18.png",
-      "/produk/produk19.png",
-      
-    ],
+    images: ["/produk/produk18.png", "/produk/produk19.png"],
     category: "bottoms",
     subcategory: "skirts",
-    colors: ["pink", "white", ],
+    colors: ["pink", "white"],
     sizes: ["S", "M", "L"],
     stock: 35,
     rating: 4.4,
@@ -311,14 +253,10 @@ export const products: Product[] = [
     name: "Linen Shorts",
     price: 269000,
     description: "Shorts berbahan linen yang breathable dan nyaman, sempurna untuk cuaca panas atau liburan pantai.",
-    images: [
-      "/produk/produk16.png",
-      "/produk/produk17.png",
-      
-    ],
+    images: ["/produk/produk16.png", "/produk/produk17.png"],
     category: "bottoms",
     subcategory: "shorts",
-    colors: ["gray", "brown", ],
+    colors: ["gray", "brown"],
     sizes: ["S", "M", "L", "XL"],
     stock: 40,
     rating: 4.6,
@@ -333,14 +271,10 @@ export const products: Product[] = [
     name: "Floral Summer Dress",
     price: 349000,
     description: "Dress motif bunga yang ringan dan nyaman untuk musim panas. Desain feminine dengan potongan A-line.",
-    images: [
-      "/produk/produk30.png",
-      
-      "/placeholder.svg?height=600&width=400",
-    ],
+    images: ["/produk/produk30.png", "/placeholder.svg?height=600&width=400"],
     category: "dresses",
     subcategory: "casual",
-    colors: ["floral-blue",],
+    colors: ["floral-blue"],
     sizes: ["S", "M", "L"],
     stock: 25,
     rating: 4.8,
@@ -354,13 +288,10 @@ export const products: Product[] = [
     price: 399000,
     description:
       "Dress midi dengan desain wrap yang flattering untuk berbagai bentuk tubuh, cocok untuk acara semi-formal.",
-    images: [
-      "/produk/produk31.png",
-     
-    ],
+    images: ["/produk/produk31.png"],
     category: "dresses",
     subcategory: "casual",
-    colors: ["yellow",],
+    colors: ["yellow"],
     sizes: ["S", "M", "L", "XL"],
     stock: 30,
     rating: 4.7,
@@ -373,14 +304,10 @@ export const products: Product[] = [
     name: "Cocktail Dress",
     price: 599000,
     description: "Dress elegan untuk acara cocktail atau pesta formal dengan detail yang sophisticated.",
-    images: [
-      "/produk/produk32.png",
-      
-     
-    ],
+    images: ["/produk/produk32.png"],
     category: "dresses",
     subcategory: "formal",
-    colors: ["cream", ],
+    colors: ["cream"],
     sizes: ["S", "M", "L"],
     stock: 20,
     rating: 4.9,
@@ -393,14 +320,10 @@ export const products: Product[] = [
     name: "Maxi Sundress",
     price: 429000,
     description: "Dress panjang yang flowy dan nyaman untuk cuaca panas, dengan desain yang effortlessly chic.",
-    images: [
-      "/produk/produk33.png",
- 
-      
-    ],
+    images: ["/produk/produk33.png"],
     category: "dresses",
     subcategory: "maxi",
-    colors: ["white", ],
+    colors: ["white"],
     sizes: ["S", "M", "L"],
     stock: 25,
     rating: 4.6,
@@ -413,12 +336,7 @@ export const products: Product[] = [
     name: "Bodycon Mini Dress",
     price: 329000,
     description: "Dress mini dengan potongan bodycon yang menonjolkan siluet tubuh, sempurna untuk acara malam.",
-    images: [
-      "/produk/produk34.png",
-      "/produk/produk35.png",
-      
-      
-    ],
+    images: ["/produk/produk34.png", "/produk/produk35.png"],
     category: "dresses",
     subcategory: "mini",
     colors: ["brown", "black"],
@@ -434,13 +352,10 @@ export const products: Product[] = [
     name: "Shirt Dress",
     price: 379000,
     description: "Dress dengan desain kemeja yang versatile, bisa dipakai casual maupun smart casual.",
-    images: [
-      "/produk/produk36.png",
-   
-    ],
+    images: ["/produk/produk36.png"],
     category: "dresses",
     subcategory: "casual",
-    colors: ["white", ],
+    colors: ["white"],
     sizes: ["S", "M", "L", "XL"],
     stock: 40,
     rating: 4.4,
@@ -453,14 +368,10 @@ export const products: Product[] = [
     name: "Evening Gown",
     price: 899000,
     description: "Gaun malam yang elegan dengan detail yang mewah, sempurna untuk acara formal atau gala.",
-    images: [
-      "/produk/produk37.png",
-      
-      "/placeholder.svg?height=600&width=400",
-    ],
+    images: ["/produk/produk37.png", "/placeholder.svg?height=600&width=400"],
     category: "dresses",
     subcategory: "formal",
-    colors: ["white", ],
+    colors: ["white"],
     sizes: ["S", "M", "L"],
     stock: 15,
     rating: 4.9,
@@ -473,10 +384,7 @@ export const products: Product[] = [
     name: "Boho Maxi Dress",
     price: 459000,
     description: "Dress maxi dengan gaya bohemian yang relaxed dan stylish, cocok untuk liburan atau acara outdoor.",
-    images: [
-      "/produk/produk38.png",
- 
-    ],
+    images: ["/produk/produk38.png"],
     category: "dresses",
     subcategory: "maxi",
     colors: ["green"],
@@ -494,14 +402,10 @@ export const products: Product[] = [
     name: "Casual Blazer",
     price: 599000,
     description: "Blazer casual yang dapat dipadupadankan dengan berbagai outfit, dari formal hingga semi-formal.",
-    images: [
-      "/produk/produk51.png",
-      "/produk/produk52.png",
-  
-    ],
+    images: ["/produk/produk51.png", "/produk/produk52.png"],
     category: "outerwear",
     subcategory: "blazers",
-    colors: ["light-brown", "light-red", ],
+    colors: ["light-brown", "light-red"],
     sizes: ["S", "M", "L", "XL"],
     stock: 20,
     rating: 4.6,
@@ -515,10 +419,7 @@ export const products: Product[] = [
     price: 459000,
     description:
       "Jaket denim klasik yang tidak pernah ketinggalan jaman. Cocok dipadukan dengan berbagai outfit casual.",
-    images: [
-      "/produk/produk50.png",
-     
-    ],
+    images: ["/produk/produk50.png"],
     category: "outerwear",
     subcategory: "jackets",
     colors: ["light-blue"],
@@ -534,14 +435,10 @@ export const products: Product[] = [
     name: "Wool Coat",
     price: 899000,
     description: "Coat berbahan wol premium yang hangat dan elegan, sempurna untuk musim dingin.",
-    images: [
-      "/produk/produk48.png",
-      "/produk/produk49.png",
-
-    ],
+    images: ["/produk/produk48.png", "/produk/produk49.png"],
     category: "outerwear",
     subcategory: "coats",
-    colors: ["cream", "black", ],
+    colors: ["cream", "black"],
     sizes: ["S", "M", "L", "XL"],
     stock: 15,
     rating: 4.8,
@@ -554,15 +451,10 @@ export const products: Product[] = [
     name: "Oversized Cardigan",
     price: 399000,
     description: "Cardigan oversized yang nyaman dan cozy, sempurna untuk layering di berbagai musim.",
-    images: [
-      "/produk/produk46.png",
-      "/produk/produk47.png",
-      
-      
-    ],
+    images: ["/produk/produk46.png", "/produk/produk47.png"],
     category: "outerwear",
     subcategory: "cardigans",
-    colors: ["black", "gray", ],
+    colors: ["black", "gray"],
     sizes: ["S/M", "L/XL"],
     stock: 30,
     rating: 4.5,
@@ -575,10 +467,7 @@ export const products: Product[] = [
     name: "Leather Jacket",
     price: 899000,
     description: "Jaket kulit premium dengan desain klasik yang timeless dan stylish.",
-    images: [
-      "/produk/produk45.png",
-   
-    ],
+    images: ["/produk/produk45.png"],
     category: "outerwear",
     subcategory: "jackets",
     colors: ["black"],
@@ -594,14 +483,10 @@ export const products: Product[] = [
     name: "Structured Blazer",
     price: 649000,
     description: "Blazer dengan potongan structured yang sharp dan professional, sempurna untuk look kantor.",
-    images: [
-      "/produk/produk43.png",
-      "/produk/produk44.png",
-     
-    ],
+    images: ["/produk/produk43.png", "/produk/produk44.png"],
     category: "outerwear",
     subcategory: "blazers",
-    colors: ["army", "white",],
+    colors: ["army", "white"],
     sizes: ["S", "M", "L", "XL"],
     stock: 25,
     rating: 4.7,
@@ -614,14 +499,10 @@ export const products: Product[] = [
     name: "Trench Coat",
     price: 799000,
     description: "Coat trench klasik yang timeless dan versatile, cocok untuk berbagai musim dan kesempatan.",
-    images: [
-      "/produk/produk41.png",
-      "/produk/produk42.png",
-     
-    ],
+    images: ["/produk/produk41.png", "/produk/produk42.png"],
     category: "outerwear",
     subcategory: "coats",
-    colors: ["army", "black",],
+    colors: ["army", "black"],
     sizes: ["S", "M", "L", "XL"],
     stock: 20,
     rating: 4.8,
@@ -634,14 +515,10 @@ export const products: Product[] = [
     name: "Button-Up Cardigan",
     price: 349000,
     description: "Cardigan dengan kancing depan yang versatile dan timeless, cocok untuk berbagai gaya dan kesempatan.",
-    images: [
-      "/produk/produk39.png",
-      "/produk/produk40.png",
-     
-    ],
+    images: ["/produk/produk39.png", "/produk/produk40.png"],
     category: "outerwear",
     subcategory: "cardigans",
-    colors: ["white", "light-red",],
+    colors: ["white", "light-red"],
     sizes: ["S", "M", "L", "XL"],
     stock: 35,
     rating: 4.4,

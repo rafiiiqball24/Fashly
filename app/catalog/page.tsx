@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import ProductGrid from "@/components/catalog/ProductGrid"
 import FilterSidebar from "@/components/catalog/FilterSidebar"
-import { products } from "@/data/products"
+import { products } from "@/lib/data/products"
 import { Filter, X } from "lucide-react"
 
 export default function CatalogPage() {

@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { products } from "@/data/products"
+import { products } from "@/lib/data/products"
 import ProductCard from "@/components/product/ProductCard"
 
 export default function FeaturedProducts() {

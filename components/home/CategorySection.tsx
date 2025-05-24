@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { categories } from "@/data/products"
+import { categories } from "@/lib/data/products"
 
 export default function CategorySection() {
   return (

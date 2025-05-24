@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { ChevronDown, ChevronUp } from "lucide-react"
-import { categories } from "@/data/products"
+import { categories } from "@/lib/data/products"
 
 interface FilterSidebarProps {
   filters: {
