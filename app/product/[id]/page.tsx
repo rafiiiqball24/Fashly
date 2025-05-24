@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
 import Image from "next/image"
 import { products } from "@/lib/data/products"
-import { cartUtils } from "@/lib/cart-utils"
 import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
@@ -12,9 +11,43 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Heart, ShoppingBag } from "lucide-react"
 import type { Product } from "@/types/product"
 
+interface CartItem {
+  id: number
+  name: string
+  price: number
+  image: string
+  color: string
+  size: string
+  quantity: number
+}
+
+const addToCart = (item: Omit<CartItem, "quantity">): void => {
+  if (typeof window === "undefined") return
+
+  try {
+    const cart = localStorage.getItem("cart")
+    const cartItems: CartItem[] = cart ? JSON.parse(cart) : []
+
+    const existingIndex = cartItems.findIndex(
+      (cartItem) => cartItem.id === item.id && cartItem.color === item.color && cartItem.size === item.size,
+    )
+
+    if (existingIndex > -1) {
+      cartItems[existingIndex].quantity += 1
+    } else {
+      cartItems.push({ ...item, quantity: 1 })
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cartItems))
+    window.dispatchEvent(new CustomEvent("cartUpdated"))
+  } catch (error) {
+    console.error("Error adding to cart:", error)
+  }
+}
+
 export default function ProductPage() {
   const params = useParams()
-  const id = Array.isArray(params.id) ? params.id[0] : params.id
+  const id = params?.id ? (Array.isArray(params.id) ? params.id[0] : params.id) : undefined
   const [product, setProduct] = useState<Product | null>(null)
   const [selectedColor, setSelectedColor] = useState("")
   const [selectedSize, setSelectedSize] = useState("")
@@ -52,7 +85,7 @@ export default function ProductPage() {
     }
 
     try {
-      cartUtils.addToCart({
+      addToCart({
         id: product.id,
         name: product.name,
         price: product.price,
