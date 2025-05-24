@@ -12,13 +12,8 @@ export default function CatalogPage() {
   const [filteredProducts, setFilteredProducts] = useState(products)
   const [showFilters, setShowFilters] = useState(false)
 
-  // Get filter values from URL
-  const categoryParam = searchParams.get("category")
-  const searchParam = searchParams.get("search")
-
-  // Filter states
   const [filters, setFilters] = useState({
-    category: categoryParam || "",
+    category: "",
     subcategory: "",
     priceRange: [0, 1000000],
     colors: [] as string[],
@@ -26,36 +21,45 @@ export default function CatalogPage() {
     sort: "newest",
   })
 
-  // Apply filters
+  const [searchParam, setSearchParam] = useState("")
+
+  // Ambil filter dari URL setelah komponen dimount
+  useEffect(() => {
+    const categoryFromURL = searchParams?.get("category") || ""
+    const searchFromURL = searchParams?.get("search") || ""
+
+    setFilters((prev) => ({ ...prev, category: categoryFromURL }))
+    setSearchParam(searchFromURL)
+  }, [searchParams])
+
+  // Terapkan filter
   useEffect(() => {
     let result = [...products]
 
-    // Category filter
     if (filters.category) {
       result = result.filter((product) => product.category === filters.category)
     }
 
-    // Subcategory filter
     if (filters.subcategory) {
       result = result.filter((product) => product.subcategory === filters.subcategory)
     }
 
-    // Price range filter
     result = result.filter(
       (product) => product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1],
     )
 
-    // Colors filter
     if (filters.colors.length > 0) {
-      result = result.filter((product) => product.colors.some((color) => filters.colors.includes(color)))
+      result = result.filter((product) =>
+        product.colors.some((color) => filters.colors.includes(color)),
+      )
     }
 
-    // Sizes filter
     if (filters.sizes.length > 0) {
-      result = result.filter((product) => product.sizes.some((size) => filters.sizes.includes(size)))
+      result = result.filter((product) =>
+        product.sizes.some((size) => filters.sizes.includes(size)),
+      )
     }
 
-    // Search filter
     if (searchParam) {
       const searchLower = searchParam.toLowerCase()
       result = result.filter(
@@ -66,7 +70,6 @@ export default function CatalogPage() {
       )
     }
 
-    // Sorting
     switch (filters.sort) {
       case "price-low":
         result.sort((a, b) => a.price - b.price)
@@ -77,34 +80,20 @@ export default function CatalogPage() {
       case "rating":
         result.sort((a, b) => b.rating - a.rating)
         break
-      case "newest":
       default:
         result.sort((a, b) => b.id - a.id)
-        break
     }
 
     setFilteredProducts(result)
   }, [filters, searchParam])
 
-  // Update category filter when URL changes
-  useEffect(() => {
-    if (categoryParam) {
-      setFilters((prev) => ({ ...prev, category: categoryParam }))
-    }
-  }, [categoryParam])
-
-  // Update filters
   const handleFilterChange = (newFilters: Partial<typeof filters>) => {
     setFilters({ ...filters, ...newFilters })
   }
 
   const getPageTitle = () => {
-    if (searchParam) {
-      return `Search results for "${searchParam}"`
-    }
-    if (filters.category) {
-      return filters.category.charAt(0).toUpperCase() + filters.category.slice(1)
-    }
+    if (searchParam) return `Search results for "${searchParam}"`
+    if (filters.category) return filters.category.charAt(0).toUpperCase() + filters.category.slice(1)
     return "All Products"
   }
 
@@ -125,7 +114,9 @@ export default function CatalogPage() {
 
         {/* Filter Sidebar - Mobile */}
         <div
-          className={`md:hidden fixed inset-0 bg-white z-40 transition-transform duration-300 transform ${showFilters ? "translate-x-0" : "-translate-x-full"}`}
+          className={`md:hidden fixed inset-0 bg-white z-40 transition-transform duration-300 transform ${
+            showFilters ? "translate-x-0" : "-translate-x-full"
+          }`}
         >
           <div className="p-4 h-full overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
