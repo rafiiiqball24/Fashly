@@ -5,6 +5,16 @@ import { useRouter } from "next/navigation"
 import { useCart } from "@/contexts/CartContext"
 import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react"
 
+type CartItem = {
+  id: number
+  name: string
+  price: number
+  quantity: number
+  images: string[]
+  selectedSize: string
+  selectedColor: string
+}
+
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -16,8 +26,8 @@ const formatPrice = (price: number) => {
 
 export default function CartPage() {
   const cartContext = useCart()
+  const router = useRouter()
 
-  // Cegah crash jika context undefined
   if (!cartContext) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
@@ -27,19 +37,17 @@ export default function CartPage() {
   }
 
   const { cart, removeFromCart, updateQuantity, getCartTotal } = cartContext
-  const router = useRouter()
-
-  const handleQuantityChange = (item: any, newQuantity: number) => {
-    if (newQuantity < 1) return
-    updateQuantity(item.id, item.selectedSize, item.selectedColor, newQuantity)
-  }
-
-  const handleRemoveItem = (item: any) => {
-    removeFromCart(item.id, item.selectedSize, item.selectedColor)
-  }
-
   const subtotal = getCartTotal()
   const total = subtotal
+
+  const handleQuantityChange = (item: CartItem, newQuantity: number) => {
+      if (newQuantity < 1) return
+      updateQuantity(item.id, item.selectedSize, item.selectedColor, newQuantity)
+    }
+  
+    const handleRemoveItem = (item: CartItem) => {
+      removeFromCart(item.id, item.selectedSize, item.selectedColor)
+    }
 
   if (cart.length === 0) {
     return (
