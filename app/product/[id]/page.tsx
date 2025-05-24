@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
 import Image from "next/image"
 import { products } from "@/lib/data/products"
+import { cartUtils } from "@/lib/cart-utils"
 import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
@@ -11,43 +12,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Heart, ShoppingBag } from "lucide-react"
 import type { Product } from "@/types/product"
 
-interface CartItem {
-  id: number
-  name: string
-  price: number
-  image: string
-  color: string
-  size: string
-  quantity: number
-}
-
-const addToCart = (item: Omit<CartItem, "quantity">): void => {
-  if (typeof window === "undefined") return
-
-  try {
-    const cart = localStorage.getItem("cart")
-    const cartItems: CartItem[] = cart ? JSON.parse(cart) : []
-
-    const existingIndex = cartItems.findIndex(
-      (cartItem) => cartItem.id === item.id && cartItem.color === item.color && cartItem.size === item.size,
-    )
-
-    if (existingIndex > -1) {
-      cartItems[existingIndex].quantity += 1
-    } else {
-      cartItems.push({ ...item, quantity: 1 })
-    }
-
-    localStorage.setItem("cart", JSON.stringify(cartItems))
-    window.dispatchEvent(new CustomEvent("cartUpdated"))
-  } catch (error) {
-    console.error("Error adding to cart:", error)
-  }
-}
-
 export default function ProductPage() {
   const params = useParams()
-  const id = params?.id ? (Array.isArray(params.id) ? params.id[0] : params.id) : undefined
+  const id = Array.isArray(params?.id) ? params.id[0] : params?.id;
+
   const [product, setProduct] = useState<Product | null>(null)
   const [selectedColor, setSelectedColor] = useState("")
   const [selectedSize, setSelectedSize] = useState("")
@@ -60,9 +28,9 @@ export default function ProductPage() {
       const foundProduct = products.find((p) => p.id.toString() === id)
       if (foundProduct) {
         setProduct(foundProduct)
-        setSelectedColor(foundProduct.colors[0])
-        setSelectedSize(foundProduct.sizes[0])
-        setCurrentImage(foundProduct.images[0])
+        setSelectedColor(foundProduct.colors[0] || "")
+        setSelectedSize(foundProduct.sizes[0] || "")
+        setCurrentImage(foundProduct.images[0] || "")
       }
     }
   }, [id])
@@ -85,7 +53,7 @@ export default function ProductPage() {
     }
 
     try {
-      addToCart({
+      cartUtils.addToCart({
         id: product.id,
         name: product.name,
         price: product.price,
@@ -109,7 +77,7 @@ export default function ProductPage() {
       const colorIndex = product.colors.findIndex((c) => c === color)
       let imageIndex = 0
 
-      // Map colors to specific images based on the new color names
+      // Map colors to specific images
       switch (color) {
         case "red":
         case "light-red":
@@ -156,7 +124,7 @@ export default function ProductPage() {
           imageIndex = colorIndex >= 0 ? colorIndex % product.images.length : 0
       }
 
-      setCurrentImage(product.images[imageIndex])
+      setCurrentImage(product.images[imageIndex] || product.images[0])
       setImageTransition(false)
     }, 150)
   }
@@ -167,6 +135,50 @@ export default function ProductPage() {
       setCurrentImage(image)
       setImageTransition(false)
     }, 150)
+  }
+
+  const getColorCode = (colorName: string): string => {
+    const colorMap: Record<string, string> = {
+      black: "#000000",
+      white: "#FFFFFF",
+      navy: "#000080",
+      blue: "#0000FF",
+      "light-blue": "#ADD8E6",
+      gray: "#808080",
+      cream: "#FFFDD0",
+      beige: "#F5F5DC",
+      khaki: "#C3B091",
+      olive: "#808000",
+      maroon: "#800000",
+      burgundy: "#800020",
+      red: "#FF0000",
+      "light-red": "#FF6B6B",
+      pink: "#FFC0CB",
+      yellow: "#FFFF00",
+      green: "#008000",
+      "forest-green": "#228B22",
+      emerald: "#50C878",
+      sage: "#BCB88A",
+      camel: "#C19A6B",
+      brown: "#A52A2A",
+      "light-brown": "#D2B48C",
+      terracotta: "#E2725B",
+      "royal-blue": "#4169E1",
+      "dusty-pink": "#D8A9A9",
+      ivory: "#FFFFF0",
+      ecru: "#C2B280",
+      "powder-blue": "#B0E0E6",
+      "silver misty": "#C0C0C0",
+      army: "#4B5320",
+      "floral-blue": "#5D8AA8",
+      "floral-pink": "#FFB6C1",
+      "blue-stripe": "#4682B4",
+      "black-stripe": "#36454F",
+      "red-stripe": "#B22222",
+      stripe: "#4682B4",
+    }
+
+    return colorMap[colorName] || "#CCCCCC"
   }
 
   return (
@@ -337,51 +349,4 @@ export default function ProductPage() {
       </div>
     </div>
   )
-}
-
-function getColorCode(colorName: string): string {
-  const colorMap: Record<string, string> = {
-    // Basic colors
-    black: "#000000",
-    white: "#FFFFFF",
-    navy: "#000080",
-    blue: "#0000FF",
-    "light-blue": "#ADD8E6",
-    gray: "#808080",
-    cream: "#FFFDD0",
-    beige: "#F5F5DC",
-    khaki: "#C3B091",
-    olive: "#808000",
-    maroon: "#800000",
-    burgundy: "#800020",
-    red: "#FF0000",
-    "light-red": "#FF6B6B",
-    pink: "#FFC0CB",
-    yellow: "#FFFF00",
-    green: "#008000",
-    "forest-green": "#228B22",
-    emerald: "#50C878",
-    sage: "#BCB88A",
-    camel: "#C19A6B",
-    brown: "#A52A2A",
-    "light-brown": "#D2B48C",
-    terracotta: "#E2725B",
-    "royal-blue": "#4169E1",
-    "dusty-pink": "#D8A9A9",
-    ivory: "#FFFFF0",
-    ecru: "#C2B280",
-    "powder-blue": "#B0E0E6",
-    "silver misty": "#C0C0C0",
-    army: "#4B5320",
-
-    // Patterns
-    "floral-blue": "#5D8AA8",
-    "floral-pink": "#FFB6C1",
-    "blue-stripe": "#4682B4",
-    "black-stripe": "#36454F",
-    "red-stripe": "#B22222",
-    stripe: "#4682B4",
-  }
-
-  return colorMap[colorName] || "#CCCCCC"
 }

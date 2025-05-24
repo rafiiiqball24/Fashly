@@ -3,21 +3,13 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { cartUtils } from "@/lib/cart-utils"
+import type { CartItem } from "@/lib/cart-utils"
 import { Trash2, Plus, Minus, ShoppingBag, Heart, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
-
-interface CartItem {
-  id: number
-  name: string
-  price: number
-  image: string
-  color: string
-  size: string
-  quantity: number
-}
 
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat("id-ID", {
@@ -28,35 +20,6 @@ const formatPrice = (price: number) => {
   }).format(price)
 }
 
-// Cart utility functions - inline to avoid import issues
-const getCartFromStorage = (): CartItem[] => {
-  if (typeof window === "undefined") return []
-  try {
-    const cart = localStorage.getItem("cart")
-    return cart ? JSON.parse(cart) : []
-  } catch {
-    return []
-  }
-}
-
-const saveCartToStorage = (items: CartItem[]): void => {
-  if (typeof window === "undefined") return
-  try {
-    localStorage.setItem("cart", JSON.stringify(items))
-    window.dispatchEvent(new CustomEvent("cartUpdated"))
-  } catch (error) {
-    console.error("Error saving cart:", error)
-  }
-}
-
-const getTotalItems = (items: CartItem[]): number => {
-  return items.reduce((total, item) => total + item.quantity, 0)
-}
-
-const getTotalPrice = (items: CartItem[]): number => {
-  return items.reduce((total, item) => total + item.price * item.quantity, 0)
-}
-
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [mounted, setMounted] = useState(false)
@@ -64,12 +27,10 @@ export default function CartPage() {
 
   useEffect(() => {
     setMounted(true)
-    const items = getCartFromStorage()
-    setCartItems(items)
+    setCartItems(cartUtils.getCart())
 
     const handleCartUpdate = () => {
-      const updatedItems = getCartFromStorage()
-      setCartItems(updatedItems)
+      setCartItems(cartUtils.getCart())
     }
 
     window.addEventListener("cartUpdated", handleCartUpdate)
@@ -87,27 +48,19 @@ export default function CartPage() {
     )
   }
 
-  const subtotal = getTotalPrice(cartItems)
+  const subtotal = cartUtils.getTotalPrice()
   const shippingCost = subtotal > 500000 ? 0 : 25000
   const total = subtotal + shippingCost
-  const totalItems = getTotalItems(cartItems)
 
   const handleQuantityChange = (id: number, color: string, size: string, newQuantity: number) => {
     if (newQuantity < 1) return
-
-    const updatedItems = cartItems.map((item) =>
-      item.id === id && item.color === color && item.size === size ? { ...item, quantity: newQuantity } : item,
-    )
-
-    saveCartToStorage(updatedItems)
-    setCartItems(updatedItems)
+    cartUtils.updateQuantity(id, color, size, newQuantity)
+    setCartItems(cartUtils.getCart())
   }
 
   const handleRemoveItem = (id: number, color: string, size: string) => {
-    const updatedItems = cartItems.filter((item) => !(item.id === id && item.color === color && item.size === size))
-
-    saveCartToStorage(updatedItems)
-    setCartItems(updatedItems)
+    cartUtils.removeFromCart(id, color, size)
+    setCartItems(cartUtils.getCart())
   }
 
   if (cartItems.length === 0) {
@@ -136,7 +89,7 @@ export default function CartPage() {
         </Link>
         <div>
           <h1 className="text-2xl font-bold">Keranjang Belanja</h1>
-          <p className="text-gray-600">{totalItems} item dalam keranjang</p>
+          <p className="text-gray-600">{cartUtils.getTotalItems()} item dalam keranjang</p>
         </div>
       </div>
 
@@ -233,7 +186,7 @@ export default function CartPage() {
 
               <div className="space-y-4">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Subtotal ({totalItems} item)</span>
+                  <span className="text-gray-600">Subtotal ({cartUtils.getTotalItems()} item)</span>
                   <span className="font-medium">{formatPrice(subtotal)}</span>
                 </div>
 

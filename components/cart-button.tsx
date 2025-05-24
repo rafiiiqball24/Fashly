@@ -4,31 +4,8 @@ import { useEffect, useState } from "react"
 import { ShoppingBag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { cartUtils } from "@/lib/cart-utils"
 import Link from "next/link"
-
-interface CartItem {
-  id: number
-  name: string
-  price: number
-  image: string
-  color: string
-  size: string
-  quantity: number
-}
-
-const getCartFromStorage = (): CartItem[] => {
-  if (typeof window === "undefined") return []
-  try {
-    const cart = localStorage.getItem("cart")
-    return cart ? JSON.parse(cart) : []
-  } catch {
-    return []
-  }
-}
-
-const getTotalItems = (items: CartItem[]): number => {
-  return items.reduce((total, item) => total + item.quantity, 0)
-}
 
 export function CartButton() {
   const [totalItems, setTotalItems] = useState(0)
@@ -36,12 +13,10 @@ export function CartButton() {
 
   useEffect(() => {
     setMounted(true)
-    const items = getCartFromStorage()
-    setTotalItems(getTotalItems(items))
+    setTotalItems(cartUtils.getTotalItems())
 
     const handleCartUpdate = () => {
-      const updatedItems = getCartFromStorage()
-      setTotalItems(getTotalItems(updatedItems))
+      setTotalItems(cartUtils.getTotalItems())
     }
 
     window.addEventListener("cartUpdated", handleCartUpdate)
