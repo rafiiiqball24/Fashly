@@ -25,8 +25,8 @@ export default function CatalogPage() {
 
   // Ambil filter dari URL setelah komponen dimount
   useEffect(() => {
-    const categoryFromURL = searchParams?.get("category") || ""
-    const searchFromURL = searchParams?.get("search") || ""
+    const categoryFromURL = searchParams.get("category") || ""
+    const searchFromURL = searchParams.get("search") || ""
 
     setFilters((prev) => ({ ...prev, category: categoryFromURL }))
     setSearchParam(searchFromURL)
