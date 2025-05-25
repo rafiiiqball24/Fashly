@@ -11,6 +11,15 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  webpack: (config) => {
+    // Ignore the src directory during build
+    config.module.rules.push({
+      test: /\.jsx?$/,
+      include: /src\//,
+      use: 'ignore-loader'
+    })
+    return config
+  }
 }
 
 export default nextConfig
