@@ -1,5 +1,5 @@
 import { categories } from "@/lib/data/products"
-import CategoryPageClient from "@/app/categories/[id]/CategoryPageClient"
+import CategoryPageClient from "./CategoryPageClient"
 
 // This must be a server component to use generateStaticParams
 export async function generateStaticParams() {
@@ -9,11 +9,12 @@ export async function generateStaticParams() {
 }
 
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
-export default function CategoryPage({ params }: CategoryPageProps) {
-  return <CategoryPageClient categoryId={params.id} />
+export default async function CategoryPage({ params }: CategoryPageProps) {
+  const { id } = await params
+  return <CategoryPageClient categoryId={id} />
 }
