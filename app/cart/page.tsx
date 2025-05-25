@@ -23,21 +23,48 @@ const formatPrice = (price: number) => {
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [mounted, setMounted] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
+    // Pastikan komponen hanya render di client-side
     setMounted(true)
-    setCartItems(cartUtils.getCart())
-
-    const handleCartUpdate = () => {
-      setCartItems(cartUtils.getCart())
+    
+    // Delay sedikit untuk memastikan cartUtils sudah tersedia
+    const loadCart = () => {
+      try {
+        const items = cartUtils?.getCart() || []
+        setCartItems(items)
+      } catch (error) {
+        console.error('Error loading cart:', error)
+        setCartItems([])
+      } finally {
+        setIsLoading(false)
+      }
     }
 
-    window.addEventListener("cartUpdated", handleCartUpdate)
-    return () => window.removeEventListener("cartUpdated", handleCartUpdate)
+    // Load cart setelah komponen ter-mount
+    loadCart()
+
+    const handleCartUpdate = () => {
+      try {
+        const items = cartUtils?.getCart() || []
+        setCartItems(items)
+      } catch (error) {
+        console.error('Error updating cart:', error)
+        setCartItems([])
+      }
+    }
+
+    // Event listener untuk update cart
+    if (typeof window !== 'undefined') {
+      window.addEventListener("cartUpdated", handleCartUpdate)
+      return () => window.removeEventListener("cartUpdated", handleCartUpdate)
+    }
   }, [])
 
-  if (!mounted) {
+  // Loading state sebelum component mount
+  if (!mounted || isLoading) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <div className="animate-pulse">
@@ -48,19 +75,31 @@ export default function CartPage() {
     )
   }
 
-  const subtotal = cartUtils.getTotalPrice()
+  // Safely calculate values dengan null checks
+  const subtotal = cartUtils?.getTotalPrice() || 0
   const shippingCost = subtotal > 500000 ? 0 : 25000
   const total = subtotal + shippingCost
+  const totalItems = cartUtils?.getTotalItems() || 0
 
   const handleQuantityChange = (id: number, color: string, size: string, newQuantity: number) => {
     if (newQuantity < 1) return
-    cartUtils.updateQuantity(id, color, size, newQuantity)
-    setCartItems(cartUtils.getCart())
+    try {
+      cartUtils?.updateQuantity(id, color, size, newQuantity)
+      const updatedItems = cartUtils?.getCart() || []
+      setCartItems(updatedItems)
+    } catch (error) {
+      console.error('Error updating quantity:', error)
+    }
   }
 
   const handleRemoveItem = (id: number, color: string, size: string) => {
-    cartUtils.removeFromCart(id, color, size)
-    setCartItems(cartUtils.getCart())
+    try {
+      cartUtils?.removeFromCart(id, color, size)
+      const updatedItems = cartUtils?.getCart() || []
+      setCartItems(updatedItems)
+    } catch (error) {
+      console.error('Error removing item:', error)
+    }
   }
 
   if (cartItems.length === 0) {
@@ -89,7 +128,7 @@ export default function CartPage() {
         </Link>
         <div>
           <h1 className="text-2xl font-bold">Keranjang Belanja</h1>
-          <p className="text-gray-600">{cartUtils.getTotalItems()} item dalam keranjang</p>
+          <p className="text-gray-600">{totalItems} item dalam keranjang</p>
         </div>
       </div>
 
@@ -186,7 +225,7 @@ export default function CartPage() {
 
               <div className="space-y-4">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Subtotal ({cartUtils.getTotalItems()} item)</span>
+                  <span className="text-gray-600">Subtotal ({totalItems} item)</span>
                   <span className="font-medium">{formatPrice(subtotal)}</span>
                 </div>
 

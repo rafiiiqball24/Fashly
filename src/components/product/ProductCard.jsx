@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+// import { Link } from "react-router-dom"
 import { Heart } from "lucide-react"
 
 const formatPrice = (price) => {
@@ -14,7 +14,8 @@ const ProductCard = ({ product }) => {
   return (
     <div className="group relative">
       {/* Product Image */}
-      <Link to={`/product/${product.id}`} className="block overflow-hidden rounded-lg bg-gray-100">
+      {/* Ganti dengan <a> atau Next.js <Link> jika migrasi ke Next.js */}
+      <a href={`/product/${product.id}`} className="block overflow-hidden rounded-lg bg-gray-100">
         <img
           src={product.images[0] || "/placeholder.svg"}
           alt={product.name}
@@ -33,12 +34,13 @@ const ProductCard = ({ product }) => {
         <button className="absolute top-2 right-2 bg-white p-1.5 rounded-full opacity-70 hover:opacity-100 transition-opacity">
           <Heart size={18} className="text-gray-800" />
         </button>
-      </Link>
+      </a>
 
       {/* Product Info */}
       <div className="mt-4 flex flex-col">
         <h3 className="text-sm font-medium text-gray-700">
-          <Link to={`/product/${product.id}`}>{product.name}</Link>
+          {/* Ganti dengan <a> atau Next.js <Link> jika migrasi ke Next.js */}
+          <a href={`/product/${product.id}`}>{product.name}</a>
         </h3>
         <p className="mt-1 text-sm text-gray-500">{product.category}</p>
         <p className="mt-1 font-medium text-gray-900">{formatPrice(product.price)}</p>

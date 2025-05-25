@@ -16,15 +16,23 @@ interface FilterSidebarProps {
   onFilterChange: (filters: any) => void
 }
 
+// Define the expanded sections type
+type ExpandedSections = {
+  category: boolean
+  price: boolean
+  color: boolean
+  size: boolean
+}
+
 export default function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
-  const [expandedSections, setExpandedSections] = useState({
+  const [expandedSections, setExpandedSections] = useState<ExpandedSections>({
     category: true,
     price: true,
     color: true,
     size: true,
   })
 
-  const toggleSection = (section: string) => {
+  const toggleSection = (section: keyof ExpandedSections) => {
     setExpandedSections({
       ...expandedSections,
       [section]: !expandedSections[section],

@@ -1,22 +1,26 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useSearchParams } from "react-router-dom"
+
 import { products } from "../data/products"
 import ProductCard from "../components/product/ProductCard"
 import FilterSidebar from "../components/catalog/FilterSidebar"
 import { Filter, X } from "lucide-react"
 
 const CatalogPage = () => {
-  const [searchParams] = useSearchParams()
+  // const [searchParams] = useSearchParams()
+  // GANTI: Ambil filter dari state atau props, bukan dari URL
+  // Untuk Next.js, gunakan useRouter jika ingin ambil query param
+  // const router = useRouter();
+  // const categoryParam = router.query.category;
   const [filteredProducts, setFilteredProducts] = useState([])
   const [showFilters, setShowFilters] = useState(false)
 
-  // Get filter values from URL
-  const categoryParam = searchParams.get("category")
-  const subcategoryParam = searchParams.get("subcategory")
-  const searchParam = searchParams.get("search")
-  const filterParam = searchParams.get("filter")
+  // Get filter values from URL (DISABLED: react-router-dom)
+  const categoryParam = "";
+  const subcategoryParam = "";
+  const searchParam = "";
+  const filterParam = "";
 
   // Filter states
   const [filters, setFilters] = useState({
